@@ -1,0 +1,242 @@
+-- ---------------------------------------------------------
+-- (C)2018-2020 Hassan DRAGA.
+-- (C)2020 Alif Community.
+-- 	 www.aliflang.org
+-- ---------------------------------------------------------
+-- The Alif Standard Library - مكتبات ألف القياسية
+-- ** This code is released under the GNU LGPLv3 Licence **
+-- ---------------------------------------------------------
+
+-- ------------------------
+-- مكتبات البايثون 3
+-- ------------------------
+
+--- https://docs.python.org/3/extending/embedding.html
+
+#ألف
+
+_س_
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include <stdlib.h>
+_س_
+
+صنف البايثون_3
+
+		خاص نص الملف = ""
+
+		-- Alif call Python (string) -> return (Long)
+		_س_
+		private: double Call_GetDouble(int argc, wxString *argv[]){
+
+			double Result = 0;
+			
+			PyObject *pName, *pModule, *pFunc;
+			PyObject *pArgs, *pValue;
+			int i;
+
+			if (argc < 3) {
+				return Result;
+			}
+
+			Py_Initialize();
+			pName = PyUnicode_DecodeFSDefault( argv[1] ->mb_str(wxConvUTF8).data() );
+
+			pModule = PyImport_Import(pName);
+			Py_DECREF(pName);
+
+			if (pModule != NULL) {
+
+				pFunc = PyObject_GetAttrString(pModule, argv[2] ->mb_str(wxConvUTF8).data());
+
+				if (pFunc && PyCallable_Check(pFunc)) {
+
+					pArgs = PyTuple_New(argc - 3);
+
+					for (i = 0; i < argc - 3; ++i) {
+
+						//--pValue = PyLong_FromLong(atoi(argv[i + 3]));
+						pValue = PyUnicode_FromString(argv[i + 3] ->mb_str(wxConvUTF8).data());
+
+						if (!pValue) {
+
+							Py_DECREF(pArgs);
+							Py_DECREF(pModule);
+
+							// --Cannot convert argument
+							return Result;
+						}
+						
+						PyTuple_SetItem(pArgs, i, pValue);
+					}
+
+					pValue = PyObject_CallObject(pFunc, pArgs);
+					Py_DECREF(pArgs);
+
+					if (pValue != NULL) {
+
+						Result = PyLong_AsLong(pValue);
+						Py_DECREF(pValue);
+
+					} else {
+
+						// --Call failed
+						Py_DECREF(pFunc);
+						Py_DECREF(pModule);
+						return Result;
+					}
+				} else {
+
+					// --Cannot find function
+				}
+
+				Py_XDECREF(pFunc);
+				Py_DECREF(pModule);
+
+			} else {
+
+				// --Failed to load
+				return Result;
+			}
+
+			//--if (Py_Finalize() < 0) {
+			//--return 120;
+			//--}
+
+			return Result;
+		}
+		_س_
+
+		-- Alif call Python (string) -> return (string)
+		_س_
+		private: wxString Call_GetString(int argc, wxString *argv[]){
+
+			wxString Result = wxT("");
+			
+			PyObject *pName, *pModule, *pFunc;
+			PyObject *pArgs, *pValue;
+			int i;
+
+			if (argc < 3) {
+				return Result;
+			}
+
+			Py_Initialize();
+			pName = PyUnicode_DecodeFSDefault( argv[1] ->mb_str(wxConvUTF8).data() );
+
+			pModule = PyImport_Import(pName);
+			Py_DECREF(pName);
+
+			if (pModule != NULL) {
+
+				pFunc = PyObject_GetAttrString(pModule, argv[2] ->mb_str(wxConvUTF8).data());
+
+				if (pFunc && PyCallable_Check(pFunc)) {
+
+					pArgs = PyTuple_New(argc - 3);
+
+					for (i = 0; i < argc - 3; ++i) {
+
+						pValue = PyUnicode_FromString(argv[i + 3] ->mb_str(wxConvUTF8).data());
+
+						if (!pValue) {
+
+							Py_DECREF(pArgs);
+							Py_DECREF(pModule);
+
+							// --Cannot convert argument
+							return Result;
+						}
+						
+						PyTuple_SetItem(pArgs, i, pValue);
+					}
+
+					pValue = PyObject_CallObject(pFunc, pArgs);
+					Py_DECREF(pArgs);
+
+					if (pValue != NULL) {
+
+						Result = PyUnicode_AsUnicode(pValue);
+						Py_DECREF(pValue);
+
+					} else {
+
+						// --Call failed
+						Py_DECREF(pFunc);
+						Py_DECREF(pModule);
+						return Result;
+					}
+				} else {
+
+					// --Cannot find function
+				}
+
+				Py_XDECREF(pFunc);
+				Py_DECREF(pModule);
+
+			} else {
+
+				// --Failed to load
+				return Result;
+			}
+
+			//--if (Py_Finalize() < 0) {
+			//--return 120;
+			//--}
+
+			return Result;
+		}
+		_س_
+
+		دالة عدد نفذ_عدد (نص الدالة، نص الخصائص)
+
+					عدد النتيجة = 0
+
+					_س_
+					wxString  arg0[] =		{ wxT("Alif") };
+					wxString  arg1[] =		{ @الملف@  };
+					wxString  arg2[] =		{ @الدالة@  };
+					wxString  arg3[] =		{ @الخصائص@ };
+
+					wxString* xargv[] = { &arg0[0], &arg1[0], &arg2[0], &arg3[0], NULL };
+					int xargc = (int)(sizeof(xargv) / sizeof(xargv[0])) - 1;
+
+					@النتيجة@ = Call_GetDouble(xargc, xargv);
+					_س_
+
+					إرجاع النتيجة
+
+		نهاية دالة
+
+		دالة نص نفذ_نص (نص الدالة، نص الخصائص)
+
+					نص النتيجة = ""
+
+					_س_
+					wxString  arg0[] =		{ wxT("Alif") };
+					wxString  arg1[] =		{ @الملف@  };
+					wxString  arg2[] =		{ @الدالة@  };
+					wxString  arg3[] =		{ @الخصائص@ };
+
+					wxString* xargv[] = { &arg0[0], &arg1[0], &arg2[0], &arg3[0], NULL };
+					int xargc = (int)(sizeof(xargv) / sizeof(xargv[0])) - 1;
+
+					@النتيجة@ = Call_GetString(xargc, xargv);
+					_س_
+
+					إرجاع النتيجة
+
+		نهاية دالة
+
+		دالة بناء (نص مسار_المجلد ، نص إسم_الملف)
+
+					الملف = إسم_الملف
+
+					_س_
+					setenv("PYTHONPATH",@مسار_المجلد@,1);
+					setenv("PYTHONDONTWRITEBYTECODE","1",1);
+					_س_
+
+		نهاية دالة
+
+نهاية صنف
